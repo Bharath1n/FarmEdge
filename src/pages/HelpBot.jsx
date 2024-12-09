@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import "../styles/chatbot.css"; // Ensure this path is correct
 import { GoogleGenerativeAI } from "@google/generative-ai"; // Import the Google Generative AI
+import Markdown from 'react-markdown'
 
 const HelpBot = () => {
   const chatBoxRef = useRef(null);
@@ -136,7 +137,7 @@ const HelpBot = () => {
         <div ref={chatBoxRef} className="chat-box">
           {messages.map((msg, index) => (
             <div key={index} className={`chat-bubble ${msg.sender}-message`}>
-              <p>{msg.text}</p>
+              <Markdown>{msg.text}</Markdown>
               <span className="message-timestamp">{new Date().toLocaleTimeString()}</span>
             </div>
           ))}
