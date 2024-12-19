@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Chart } from 'chart.js';
-import '../styles/weatherIrrigation.css'; // Ensure this CSS file exists for styling
+import "../styles/weatherIrrigation.css"; // Ensure this CSS file exists for styling
 
 const WeatherIrrigation = () => {
     const [weatherData, setWeatherData] = useState(null);
     const [irrigationDecision, setIrrigationDecision] = useState("Loading...");
     const [waterNeed, setWaterNeed] = useState("Waiting...");
 
-    const weatherApiKey = import.meta.env.VITE_WEATHER_API_KEY; // Use Vite's environment variable
+    const meteoblueApiKey = import.meta.env.VITE_METEOBLUE_API_KEY; // Use Vite's environment variable
     const city = "Bangalore";
 
     useEffect(() => {
@@ -16,22 +16,22 @@ const WeatherIrrigation = () => {
 
     const fetchWeatherData = async () => {
         try {
-            const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${city}&days=3`);
+            const response = await fetch(`https://my.meteoblue.com/packages/basic-1h_basic-day?apikey=5bWQmld9LeK1JwUp&lat=12.9719&lon=77.5937&asl=920&format=json`);
             const data = await response.json();
             setWeatherData(data);
             updateIrrigationDecision(data);
-            updateWeatherGraph(data.forecast.forecastday);
+            updateWeatherGraph(data);
         } catch (error) {
             console.error("Error fetching weather data:", error);
             alert("Failed to fetch weather data. Please try again later.");
         }
     };
 
-    const updateWeatherGraph = (forecastData) => {
-        const labels = forecastData.map(day => day.date);
-        const tempData = forecastData.map(day => day.day.avgtemp_c);
-        const precipData = forecastData.map(day => day.day.totalprecip_mm);
-        const humidityData = forecastData.map(day => day.day.avghumidity);
+    const updateWeatherGraph = (data) => {
+        const labels = data.time.map(time => new Date(time).toLocaleDateString());
+        const tempData = data.temperature_2m;
+        const precipData = data.precipitation_sum;
+        const humidityData = data.humidity_2m;
 
         const ctx = document.getElementById('weatherChart').getContext('2d');
         new Chart(ctx, {
@@ -110,7 +110,7 @@ const WeatherIrrigation = () => {
     };
 
     const updateIrrigationDecision = (data) => {
-        const rain = data.forecast.forecastday[0].day.totalprecip_mm;
+        const rain = data.precipitation_sum[0]; // Assuming the first value is for today
         const decision = rain > 5 ? "No irrigation needed" : rain > 2 ? "Reduced irrigation" : "Full irrigation required";
         const icon = rain > 5 ? "no-water.png" : rain > 2 ? "reduced-water.png" : "full-water.png";
 
@@ -121,30 +121,29 @@ const WeatherIrrigation = () => {
     const calculateCropWatering = () => {
         const area = document.getElementById('crop-area').value;
         const cropType = document.getElementById('crop-type').value;
-        const waterNeeds = { wheat: 0.6, rice: 1.2, corn: 1.0 }; // Water needs in liters per square meter
+        const waterNeeds = { wheat: 0.5, rice: 1.0, corn: 0.8 }; // Water needs in cubic meters per hectare
 
-        const waterRequired = area * (waterNeeds[cropType] || 0);
-        setWaterNeed(`Water needed for ${area} m² of ${cropType}: ${waterRequired} liters`);
+        const waterRequired = area * waterNeeds[cropType];
+        setWaterNeed(`Water needed for ${area} hectares of ${cropType}: ${waterRequired} m³`);
     };
 
     return (
-        <div className="weather-irrigation">
-            <h2>Weather Irrigation Dashboard</h2>
-            <canvas id="weatherChart"></canvas>
-            <div className="card">
-                <h3>Irrigation Decision</h3>
-                <p>{irrigationDecision}</p>
+        <div className="weather-irrigation-container">
+            <h1>Weather Irrigation Decision</h1>
+            <canvas id="weatherChart" width="400" height="200"></canvas>
+            <div className="irrigation-decision">
+                <h2>Irrigation Decision: {irrigationDecision}</h2>
                 <img id="irrigation-icon" src="./assets/loading.png" alt="Irrigation Icon" />
             </div>
-            <div className="card">
-                <h3>Crop Watering Calculator</h3>
-                <input type="number" id="crop-area" placeholder="Area (m²)" />
+            <div className="crop-water-calculation">
+                <h3>Calculate Watering Needs</h3>
+                <input type="number" id="crop-area" placeholder="Area (hectares)" />
                 <select id="crop-type">
                     <option value="wheat">Wheat</option>
                     <option value="rice">Rice</option>
                     <option value="corn">Corn</option>
                 </select>
-                <button onClick={calculateCropWatering}>Calculate Water Needed</button>
+                <button onClick={calculateCropWatering}>Calculate Watering</button>
                 <p>{waterNeed}</p>
             </div>
         </div>

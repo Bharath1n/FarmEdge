@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ProductCard from './ProductCard';
 
 const products = [
@@ -70,7 +70,7 @@ const products = [
           name: "Garden Trowel",
           description: "Durable hand trowel for easy gardening.",
           price: 350,
-          image: "https://i.pinimg.com/474x/2b/3e/61/2b3e61a8abd3d8b7cedc0b1825cd59b1.jpg",
+          image: "https://i.pinimg.com/474x/0c/c0/1a/0cc01acbfdae759ea012883335c2fdae.jpg",
         },
         {
           id: 11,
@@ -87,7 +87,7 @@ const products = [
           image: "https://i.pinimg.com/474x/41/06/a0/4106a0665bc511a65f6bf9e016c2b310.jpg",
         },
       ];
-
+    
 const ProductList = ({ addToCart, addToWishlist }) => {
   return (
     <div className="product-list">

@@ -12,7 +12,7 @@ const Navbar = () => {
         </a>
         <ul className="nav">
           <li className="nav-item">
-            <a className="nav-link" href="./Home">Home</a>
+            <a className="nav-link" href="/">Home</a>
           </li>
           <li className="nav-item">
             <a className="nav-link" href="./Market">Market</a>
@@ -20,9 +20,9 @@ const Navbar = () => {
           <li className="nav-item">
             <a className="nav-link" href="./Ecommerce">E-Commerce</a>
           </li>
-          {/* <li className="nav-item">
+          <li className="nav-item">
             <a className="nav-link" href="./weatherIrrigation">Irrigation</a>
-          </li> */}
+          </li>
           <li className="nav-item">
           <a className="nav-link" href="./HelpBot">Chatbot</a></li>
           <li className="nav-item">
