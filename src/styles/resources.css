@@ -1,9 +1,3 @@
-body {
-  margin: 0;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  background-color: #f9f9f9; /* Light background for better contrast */
-}
-
 .resources-hero {
   text-align: center;
   padding: 60px 20px;
@@ -12,12 +6,12 @@ body {
 }
 
 .resources-hero h1 {
-  font-size: 2.5rem; /* Larger font size for the main heading */
+  font-size: 2.5rem; 
   margin: 0;
 }
 
 .resources-hero p {
-  font-size: 1.2rem; /* Slightly larger font for the description */
+  font-size: 1.2rem; 
 }
 
 .resources-hero-buttons {

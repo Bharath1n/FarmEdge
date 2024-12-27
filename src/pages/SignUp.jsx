@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import "../styles/signup.css"; // Import the CSS file
 
@@ -8,18 +9,22 @@ const Signup = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (password !== confirmPassword) {
             alert("Passwords do not match!");
             return;
         }
-        // Here you can send the data to your backend or store it
-        console.log({ mobile, password });
-        
-        // Show success alert and redirect to login
-        alert("Signup successful! Please log in.");
-        navigate('/login'); // Redirect to login page
+
+        try {
+            const response = await axios.post('http://localhost:5000/api/auth/signup', { mobile, password });
+            
+            alert(response.data.message); // Display success message
+            navigate("/login"); // Redirect to login page
+        } catch (error) {
+            alert(error.response?.data?.error || 'An error occurred during signup.');
+        }
 
         // Reset the form
         setMobile('');
@@ -66,7 +71,9 @@ const Signup = () => {
                 </div>
                 <button type="submit" className="auth-button" id="signup-button">Sign Up</button>
             </form>
-            <p className="auth-switch" id="switch-to-login">Already have an account? <a href="/login">Login</a></p>
+            <p className="auth-switch" id="switch-to-login">
+                Already have an account? <a href="/login">Login</a>
+            </p>
         </div>
     );
 };

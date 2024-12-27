@@ -2,27 +2,33 @@
   "name": "farmedge",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server.js"
   },
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@google/generative-ai": "^0.21.0",
     "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.12.0",
+    "mongoose": "^8.9.2",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-markdown": "^9.0.1",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.0.2",
+    "react-router-dom": "^7.1.1",
     "redux": "^5.0.1"
   },
   "devDependencies": {
@@ -36,5 +42,10 @@
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.12.0",
     "vite": "^6.0.1"
-  }
+  },
+  "description": "FarmEdge is a modern web application designed to assist farmers with real-time data, resources, and tools to enhance their farming practices. The application provides features such as weather updates, market insights, e-commerce for agricultural products, and a chatbot for personalized assistance.",
+  "main": "eslint.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

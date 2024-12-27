@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import "../styles/signup.css"; // Import the CSS file
+import "../styles/signup.css"; // Import the CSS file for styling
 
 const Login = () => {
     const [mobile, setMobile] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Here you can validate the login credentials
-        console.log({ mobile, password });
-
-        // Show success alert and redirect to home
-        alert("Login successful!");
-        navigate('/home'); // Redirect to home screen
+        try {
+            const response = await axios.post('http://localhost:5000/api/auth/login', { mobile, password });
+            alert(response.data.message); // Display success message
+            localStorage.setItem('token', response.data.token); // Store token in local storage
+            navigate('/'); // Redirect to home page
+        } catch (error) {
+            alert(error.response?.data?.error || 'An error occurred during login.');
+        }
 
         // Reset the form
         setMobile('');
@@ -49,9 +52,12 @@ const Login = () => {
                 </div>
                 <button type="submit" className="auth-button" id="login-button">Login</button>
             </form>
-            <p className="auth-switch" id="switch-to-signup">Don't have an account? <a href="/signup">Sign up</a></p>
+            <p className="auth-switch" id="switch-to-signup">
+                Don't have an account? <a href="/signup">Sign up</a>
+            </p>
         </div>
     );
 };
+// node -e "console.log(require('crypto').randomBytes(64).toString('hex'))" to roduce jwt secret key
 
 export default Login;

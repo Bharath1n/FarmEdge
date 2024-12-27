@@ -6,8 +6,11 @@ function Market() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortConfig, setSortConfig] = useState({ key: 'State', direction: 'ascending' });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     fetch('../market.csv')
       .then(response => {
         if (!response.ok) {
@@ -18,8 +21,12 @@ function Market() {
       .then(data => {
         const parsedData = parseCSV(data);
         setMarketData(parsedData);
+        setLoading(false);
       })
-      .catch(error => console.error('Error fetching the CSV file:', error));
+      .catch(error => {
+        console.error('Error fetching the CSV file:', error);
+        setLoading(false);
+      });
   }, []);
 
   const parseCSV = (data) => {
@@ -67,6 +74,32 @@ function Market() {
   const paginatedData = paginateData(filteredData, currentPage, rowsPerPage);
   const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
+  const sortedData = React.useMemo(() => {
+    let sortableItems = [...paginatedData];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [paginatedData, sortConfig]);
+  
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+  
+  // In your table header
+
   return (
     <div className="market-container">
       <header>
@@ -80,10 +113,11 @@ function Market() {
           onChange={handleSearch}
           placeholder="Search..."
         />
+        
         <table>
           <thead>
             <tr>
-              <th>State</th>
+              <th onClick={() => requestSort('State')}>State</th>
               <th>District</th>
               <th>Market</th>
               <th>Commodity</th>

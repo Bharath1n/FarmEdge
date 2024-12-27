@@ -18,8 +18,6 @@ const Home = () => {
           </Link>
         </div>
       </section>
-
-      {/* Features Overview */}
       <section className="features">
         <h2>Our Key Features</h2>
         <div className="feature-grid">
@@ -40,7 +38,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
       {/* Quotes Section */}
       <section className="quotes">
         <div className="quote">

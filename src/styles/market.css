@@ -1,7 +1,9 @@
 .market-container {
   margin: 20px;
 }
-
+.market-container h1 {
+  color: white;
+}
 .market-data {
   margin-top: 20px;
 }
@@ -9,6 +11,7 @@
 .market-data h2 {
   font-size: 24px;
   margin-bottom: 10px;
+  color: black;
 }
 
 input[type="text"] {
@@ -24,16 +27,22 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
+  border: 1px solid black;
+  background-color: whitesmoke;
 }
 
 th, td {
   padding: 10px;
   text-align: left;
-  border: 1px solid #ddd;
+  border: 1px solid black;
+  text-align: center;
 }
 
 th {
-  background-color: #f2f2f2;
+  background-color: rgb(86, 117, 86);
+  color: white;
+  text-transform: capitalize;
+  font-size: large;
 }
 
 .pagination {
@@ -55,7 +64,6 @@ button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-
 @media (max-width: 768px) {
   th, td {
       font-size: 14px;

@@ -1,24 +1,19 @@
-/* General Styles */
-body {
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-  }
-  
   /* E-commerce Container */
   .ecommerce {
     max-width: 1200px;
-    margin: 0 auto;
     padding: 20px;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    background-color: whitesmoke;
+    margin:60px;
   }
   
   /* Header */
   .ecommerce h1 {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     text-align: center;
-    color: green;
+    color: black;
     margin-bottom: 40px;
+    text-transform: uppercase;
   }
   
   /* Product List */
@@ -65,19 +60,19 @@ body {
   
   /* Buttons */
   .product-card button {
-    background-color:rgb(68, 182, 89);
-    color: black;
+    background-color:#6e9b82;
+    color: whitesmoke;
     border: none;
     border-radius: 4px;
     padding: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
     width: 100%;
-    margin:5px;
+    margin:4px;
   }
   
   .product-card button:hover {
-    background-color: #218838;
+    background-color:#539e74 ;
   }
   .cart-wishlist-page {
     display: flex; /* Use flexbox for layout */
@@ -90,7 +85,11 @@ body {
     min-height: 70.6vh;
   }
   .view-cart-wishlist{
-    background-color: blue;
+    background-color: rgb(76, 76, 149);
+    text-transform: uppercase;
+  }
+  .view-cart-wishlist:hover{
+    background-color:rgb(58, 58, 144); ;
   }
   .empty-cw{
     text-align: center;
