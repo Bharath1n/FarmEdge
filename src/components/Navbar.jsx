@@ -13,26 +13,27 @@ const Navbar = () => {
         </a>
         <ul className="nav">
           <li className="nav-item">
-            <a className="nav-link" href="/">Home</a>
+            <Link to="/" className="nav-link">Home</Link>
           </li>
           {/* <li className="nav-item">
             <a className="nav-link" href="./Market">Market</a>
           </li> */}
           <li className="nav-item">
-            <a className="nav-link" href="./Ecommerce">E-Commerce</a>
+            <Link to="/Ecommerce" className="nav-link">E-Commerce</Link>
           </li>
           {/* <li className="nav-item">
             <a className="nav-link" href="./weatherIrrigation">Irrigation</a>
           </li> */}
           <li className="nav-item">
-          <a className="nav-link" href="./HelpBot">Chatbot</a></li>
-          <li className="nav-item">
-            <a className="nav-link" href="./Resources">Resources</a>
+            <Link to="/helpbot" className="nav-link">Chatbot</Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="./signup">
+            <Link to="/resources" className="nav-link">Resources</Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/signup" className="nav-link">
               <i className="fas fa-user"></i>
-            </a>
+            </Link>
           </li>
           <li className="nav-item">
             <Link to="/cart-wishlist" className="nav-link">
