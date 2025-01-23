@@ -1,15 +1,15 @@
 import React, { useRef, useState } from "react";
-import "../styles/chatbot.css"; // Ensure this path is correct
-import { GoogleGenerativeAI } from "@google/generative-ai"; // Import the Google Generative AI
+import '../styles/app.css';
+import "../styles/chatbot.css"; 
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import Markdown from 'react-markdown'
 
 const HelpBot = () => {
   const chatBoxRef = useRef(null);
-  const [userInput, setUserInput] = useState(""); // State for user input
-  const [messages, setMessages] = useState([]); // State for chat messages
+  const [userInput, setUserInput] = useState("");
+  const [messages, setMessages] = useState([]);
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-  // Initialize the Google Generative AI instance
   const genAI = new GoogleGenerativeAI(geminiApiKey);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   const generationConfig = {
@@ -19,20 +19,15 @@ const HelpBot = () => {
     maxOutputTokens: 8192,
     responseMimeType: "text/plain",
   };
-
-  // Function to add a message to the chat
   const addMessage = (message, sender) => {
     setMessages((prevMessages) => [
       ...prevMessages,
       { text: message, sender },
     ]);
-    // Scroll to the bottom of the chat
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
   };
-
-  // Function to send a query to the AI model
   const sendQuery = async (query) => {
     try {
       const chatSession = model.startChat({
@@ -106,25 +101,21 @@ const HelpBot = () => {
       });
 
       const result = await chatSession.sendMessage(query);
-      const responseText = result.response.text(); // Get the response text
-      addMessage(responseText, "bot"); // Add the AI response to the chat
+      const responseText = result.response.text();
+      addMessage(responseText, "bot");
     } catch (error) {
       console.error("Error generating content:", error);
       addMessage("Sorry, I couldn't generate a response.", "bot");
     }
   };
-
-  // Handle send button click
   const handleSend = () => {
     const query = userInput.trim();
     if (query) {
       addMessage(query, "user");
-      sendQuery(query); // Send the query to the AI model
-      setUserInput(""); // Reset input after sending
+      sendQuery(query);
+      setUserInput("");
     }
   };
-
-  // Allow Enter key to send a message
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       handleSend();
@@ -146,8 +137,8 @@ const HelpBot = () => {
           <input
             type="text"
             value={userInput}
-            onChange={(e) => setUserInput(e.target.value)} // State update
-            onKeyDown={handleKeyDown} // Use onKeyDown instead of onKeyPress
+            onChange={(e) => setUserInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Type your query here..."
           />
           <button onClick={handleSend}>Send</button>
@@ -157,4 +148,4 @@ const HelpBot = () => {
   );
 };
 
-export default HelpBot; // Ensure the component is exported correctly
+export default HelpBot;

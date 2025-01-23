@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "../styles/app.css";
 import logo from '../assets/mainlogo.png';
 
@@ -14,9 +15,9 @@ const Navbar = () => {
           <li className="nav-item">
             <a className="nav-link" href="/">Home</a>
           </li>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <a className="nav-link" href="./Market">Market</a>
-          </li>
+          </li> */}
           <li className="nav-item">
             <a className="nav-link" href="./Ecommerce">E-Commerce</a>
           </li>
@@ -32,6 +33,11 @@ const Navbar = () => {
             <a className="nav-link" href="./signup">
               <i className="fas fa-user"></i>
             </a>
+          </li>
+          <li className="nav-item">
+            <Link to="/cart-wishlist" className="nav-link">
+            <i className="fa fa-shopping-cart"></i>
+            </Link>
           </li>
         </ul>
       </div>

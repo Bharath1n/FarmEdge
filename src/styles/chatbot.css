@@ -10,7 +10,7 @@ main {
     display: flex;
     flex-direction: column;
     height: 70vh;
-    border: 1px solid #ddd;
+    border: 1px solid grey;
     border-radius: 10px;
     overflow: hidden;
 }
@@ -37,7 +37,7 @@ main {
 .chat-input-container input {
     flex: 1;
     padding: 15px;
-    border: 2px solid #ddd;
+    border: 2px solid grey;
     border-radius: 5px;
     font-size: 1.2em;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;

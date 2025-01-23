@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../styles/app.css';
 import "../styles/market.css";
 
 function Market() {
@@ -55,7 +56,7 @@ function Market() {
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
-    setCurrentPage(1); // Reset to first page on search
+    setCurrentPage(1);
   };
 
   const handlePrevPage = () => {
@@ -97,8 +98,6 @@ function Market() {
     }
     setSortConfig({ key, direction });
   };
-  
-  // In your table header
 
   return (
     <div className="market-container">

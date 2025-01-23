@@ -1,6 +1,6 @@
 import React from "react";
-import farmedImg from '../assets/farmed.jpg'; // Ensure you have a suitable hero image
-import weatherIcon from '../assets/weather-icon.png'; // Ensure you have the correct icon paths
+import farmedImg from '../assets/farmed.jpg';
+import weatherIcon from '../assets/weather-icon.png';
 import marketIcon from '../assets/market-icon.png';
 import aiIcon from '../assets/ai-icon.png';
 import { Link } from "react-router-dom";
@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 const Home = () => {
   return (
     <div className="content">
-      {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
           <h1>Welcome to FarmEdge</h1>
@@ -38,7 +37,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-      {/* Quotes Section */}
       <section className="quotes">
         <div className="quote">
           <p>"The farmer has to be an optimist or he wouldn’t still be a farmer." - Will Rogers</p>

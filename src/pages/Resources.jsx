@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/resources.css'; // Import the CSS file for styling
+import '../styles/app.css';
+import '../styles/resources.css';
+import { color } from 'chart.js/helpers';
 
 const Resources = () => {
   const [newsArticles, setNewsArticles] = useState([]);
@@ -13,7 +15,7 @@ const Resources = () => {
         const response = await fetch(newsApiUrl);
         const data = await response.json();
         if (data.articles && data.articles.length > 0) {
-          setNewsArticles(data.articles.slice(0, 6)); // Get the top 6 articles
+          setNewsArticles(data.articles.slice(0, 4)); 
         }
       } catch (error) {
         console.error('Error fetching news:', error);
@@ -37,7 +39,7 @@ const Resources = () => {
 
       {/* News Section */}
       <section id="resources-news" className="resources-news-section">
-        <h2>Latest Farming News</h2>
+        <h2 >Latest AGRO News</h2>
         <div id="resources-news-container" className="resources-news-container">
           {newsArticles.length > 0 ? (
             newsArticles.map((article, index) => (

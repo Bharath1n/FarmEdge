@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import "../styles/signup.css"; // Import the CSS file for styling
+import '../styles/app.css';
+import "../styles/signup.css";
 
 const Login = () => {
     const [mobile, setMobile] = useState('');
@@ -12,14 +13,13 @@ const Login = () => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:5000/api/auth/login', { mobile, password });
-            alert(response.data.message); // Display success message
-            localStorage.setItem('token', response.data.token); // Store token in local storage
-            navigate('/'); // Redirect to home page
+            alert(response.data.message);
+            localStorage.setItem('token', response.data.token);
+            navigate('/');
         } catch (error) {
             alert(error.response?.data?.error || 'An error occurred during login.');
         }
 
-        // Reset the form
         setMobile('');
         setPassword('');
     };
@@ -58,6 +58,6 @@ const Login = () => {
         </div>
     );
 };
-// node -e "console.log(require('crypto').randomBytes(64).toString('hex'))" to roduce jwt secret key
+// node -e "console.log(require('crypto').randomBytes(64).toString('hex'))" to produce jwt secret key
 
 export default Login;

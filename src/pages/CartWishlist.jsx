@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/app.css';
 import "../styles/Ecommerce.css";
 
 const CartWishlistPage = ({ cartItems, removeFromCart, wishlistItems, removeFromWishlist }) => {

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import "../styles/signup.css"; // Import the CSS file
+import '../styles/app.css';
+import "../styles/signup.css";
 
 const Signup = () => {
     const [mobile, setMobile] = useState('');
@@ -20,13 +21,11 @@ const Signup = () => {
         try {
             const response = await axios.post('http://localhost:5000/api/auth/signup', { mobile, password });
             
-            alert(response.data.message); // Display success message
-            navigate("/login"); // Redirect to login page
+            alert(response.data.message);
+            navigate("/login");
         } catch (error) {
             alert(error.response?.data?.error || 'An error occurred during signup.');
         }
-
-        // Reset the form
         setMobile('');
         setPassword('');
         setConfirmPassword('');

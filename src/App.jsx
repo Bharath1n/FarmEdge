@@ -21,12 +21,12 @@ function App() {
 
   const addToCart = (product) => {
     setCartItems((prev) => [...prev, product]);
-    setNotification(`${product.name} has been added to your cart!`); // Set notification message
-    setFadeOut(false); // Reset fade out state
+    setNotification(`${product.name} has been added to your cart!`);
+    setFadeOut(false);
     setTimeout(() => {
-      setFadeOut(true); // Start fade out after 3 seconds
+      setFadeOut(true);
     }, 3000);
-    setTimeout(() => setNotification(""), 3500); // Clear notification after 3 seconds
+    setTimeout(() => setNotification(""), 3500);
  
   };
 
@@ -36,12 +36,12 @@ function App() {
 
   const addToWishlist = (product) => {
     setWishlistItems((prev) => [...prev, product]);
-    setNotification(`${product.name} has been added to your wishlist!`); // Set notification message
-    setFadeOut(false); // Reset fade out state
+    setNotification(`${product.name} has been added to your wishlist!`);
+    setFadeOut(false);
     setTimeout(() => {
-      setFadeOut(true); // Start fade out after 3 seconds
+      setFadeOut(true);
     }, 3000);
-    setTimeout(() => setNotification(""), 3500); // Clear notification after 3 seconds
+    setTimeout(() => setNotification(""), 3500);
   
   };
 
