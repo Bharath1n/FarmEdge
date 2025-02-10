@@ -4,14 +4,13 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/Login"; 
-import HelpBot from "./pages/HelpBot";
 import Market from "./pages/Market";
+import Chatbot from "./pages/Chatbot";
 import SignUp from "./pages/SignUp";
 import Ecommerce from './pages/Ecommerce';
 import CartWishlistPage from './pages/CartWishlist';
 import Resources from "./pages/Resources";
-import WeatherIrrigation from "./pages/WeatherIrrigation";
-import "./styles/app.css";
+import Weather from "./pages/Weather";
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -55,8 +54,8 @@ function App() {
         {notification && <div className={`notification ${fadeOut ? 'fade-out' : ''}`}>{notification}</div>}
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/helpbot" element={<HelpBot />} />
-            <Route path="/weatherIrrigation" element={<WeatherIrrigation />} />
+            <Route path="/chatbot" element={<Chatbot />} />
+            <Route path="/weather" element={<Weather />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/market" element={<Market />} />

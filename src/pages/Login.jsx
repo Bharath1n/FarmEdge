@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/app.css';
-import "../styles/signup.css";
 
 const Login = () => {
     const [mobile, setMobile] = useState('');
@@ -25,39 +23,45 @@ const Login = () => {
     };
 
     return (
-        <div className="auth-container" id="login-container">
-            <h2 className="auth-title" id="login-title">Login</h2>
-            <form className="auth-form" id="login-form" onSubmit={handleSubmit}>
-                <div className="auth-field" id="login-mobile-field">
-                    <label htmlFor="login-mobile">Mobile Number:</label>
-                    <input 
-                        type="tel" 
-                        id="login-mobile" 
-                        className="auth-input" 
-                        value={mobile} 
-                        onChange={(e) => setMobile(e.target.value)} 
-                        required 
-                    />
-                </div>
-                <div className="auth-field" id="login-password-field">
-                    <label htmlFor="login-password">Password:</label>
-                    <input 
-                        type="password" 
-                        id="login-password" 
-                        className="auth-input" 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                        required 
-                    />
-                </div>
-                <button type="submit" className="auth-button" id="login-button">Login</button>
-            </form>
-            <p className="auth-switch" id="switch-to-signup">
-                Don't have an account? <a href="/signup">Sign up</a>
-            </p>
+        <div className="flex items-center justify-center min-h-screen  bg-cover bg-gradient-to-t from-neutral-100 to-green-300">
+            <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
+                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-gray-700">Mobile Number:</label>
+                        <input 
+                            type="tel" 
+                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                            value={mobile} 
+                            onChange={(e) => setMobile(e.target.value)} 
+                            required 
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700">Password:</label>
+                        <input 
+                            type="password" 
+                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
+                            required 
+                        />
+                    </div>
+                    <button 
+                        type="submit" 
+                        className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
+                    >
+                        Login
+                    </button>
+                </form>
+                <p className="mt-4 text-center text-gray-600">
+                    Don't have an account? <a href="/signup" className="text-green-500 hover:underline">Sign up</a>
+                </p>
+            </div>
         </div>
     );
 };
+
 // node -e "console.log(require('crypto').randomBytes(64).toString('hex'))" to produce jwt secret key
 
 export default Login;

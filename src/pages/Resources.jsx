@@ -1,110 +1,98 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/app.css';
-import '../styles/resources.css';
-import { color } from 'chart.js/helpers';
 
 const Resources = () => {
   const [newsArticles, setNewsArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const API_KEY = import.meta.env.VITE_NEWSDATA_API_KEY;
+  const NEWS_API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&q=farming&language=en`;
 
   useEffect(() => {
     const fetchNews = async () => {
-      const apiKey = '1ebe56ca0b4c48b39c6fb9bd5fd6c1a5'; // Replace with your NewsAPI key
-      const newsApiUrl = `https://newsapi.org/v2/everything?q=farming&apiKey=${apiKey}`;
-
       try {
-        const response = await fetch(newsApiUrl);
+        const response = await fetch(NEWS_API_URL);
         const data = await response.json();
-        if (data.articles && data.articles.length > 0) {
-          setNewsArticles(data.articles.slice(0, 4)); 
+        if (data.results) {
+          setNewsArticles(data.results.slice(0, 4));
+        } else {
+          setError("No news found.");
         }
       } catch (error) {
-        console.error('Error fetching news:', error);
+        setError("Failed to fetch news.");
       }
+      setLoading(false);
     };
 
     fetchNews();
   }, []);
 
   return (
-    <div className="resources-page">
-      {/* Hero Section */}
-      <section className="resources-hero">
-        <h1>Be Safe, Control the Environment</h1>
-        <p>Optimizing sustainability with modern farming techniques.</p>
-        <div className="resources-hero-buttons">
-          <button className="resources-primary-btn">Learn More</button>
-          <button className="resources-secondary-btn">Read More</button>
-        </div>
-      </section>
+    <div className="w-full">
 
-      {/* News Section */}
-      <section id="resources-news" className="resources-news-section">
-        <h2 >Latest AGRO News</h2>
-        <div id="resources-news-container" className="resources-news-container">
-          {newsArticles.length > 0 ? (
-            newsArticles.map((article, index) => (
-              <div key={index} className="resources-news-card">
-                <img src={article.urlToImage || 'https://via.placeholder.com/350x200'} alt={article.title} />
-                <h4>{article.title}</h4>
-                <p>{article.description || 'No description available.'}</p>
-                <a href={article.url} target="_blank" rel="noopener noreferrer">Read More</a>
+    <section className="text-center bg-green-100 py-16 border-b-4 border-green-500">
+      <h1 className="text-4xl font-bold text-green-800">Be Safe, Control the Environment</h1>
+      <p className="text-lg text-gray-700 mt-2">Optimizing sustainability with modern farming techniques.</p>
+      <div className="mt-6 flex justify-center gap-4">
+        <button className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition">
+          Learn More
+        </button>
+        <button className="bg-red-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-700 transition">
+          Read More
+        </button>
+      </div>
+    </section>
+
+    <section className="px-6 py-12">
+        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">Latest AGRO News</h2>
+        {loading ? (
+          <p className="text-center text-lg">Loading news...</p>
+        ) : error ? (
+          <p className="text-center text-red-500">{error}</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {newsArticles.map((article, index) => (
+              <div key={index} className="bg-white border rounded-lg shadow-md p-4 transition hover:shadow-lg">
+                <img
+                  src={article.image_url || 'https://via.placeholder.com/350x200'}
+                  alt={article.title}
+                  className="w-full h-40 object-cover rounded-md"
+                />
+                <h4 className="text-lg font-semibold mt-3">{article.title}</h4>
+                <p className="text-sm text-gray-600">{article.description || 'No description available.'}</p>
+                <a href={article.link} target="_blank" rel="noopener noreferrer" className="text-green-600 font-semibold mt-2 inline-block">
+                  Read More →
+                </a>
               </div>
-            ))
-          ) : (
-            <p>No news articles found.</p>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Videos Section */}
-      <section id="resources-videos" className="resources-videos-section">
-        <h2>Farming Videos</h2>
+      <section className="px-6 py-12 bg-gray-100">
+        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">Farming Videos</h2>
 
-        {/* Introduction Videos */}
-        <div className="resources-video-category">
-          <h3>Introduction to Farming</h3>
-          <div className="resources-video-container">
-            <iframe src="https://www.youtube.com/embed/lRyXlvIJFWI" title="Intro Video 1" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/NCp93xbSwWM" title="Intro Video 2" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/L4ymLChJmew" title="Intro Video 3" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/yzs-LOJ1w08" title="Intro Video 4" allowFullScreen></iframe>
-         
+        {[
+          { title: "Introduction to Farming", videos: ["lRyXlvIJFWI", "NCp93xbSwWM", "L4ymLChJmew", "yzs-LOJ1w08"] },
+          { title: "Beginner Farming Techniques", videos: ["heTxEsrPVdQ", "fRlUhUWS0Hk", "_AM2fX24vtQ", "ETZF-oyPSy0"] },
+          { title: "Intermediate Farming Techniques", videos: ["zFdxU-73yAc", "ETZF-oyPSy0", "LGF33NN4B8U", "ys42RUFhMqg"] },
+          { title: "Advanced Farming Techniques", videos: ["kN_gua66C1w", "ETZF-oyPSy0", "nGtdZxTNu0o", "zFdxU-73yAc"] }
+        ].map((category, index) => (
+          <div key={index} className="mb-10">
+            <h3 className="text-2xl font-semibold text-green-800 mb-4">{category.title}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {category.videos.map((video, idx) => (
+                <iframe
+                  key={idx}
+                  className="w-full h-48 rounded-md shadow-md"
+                  src={`https://www.youtube.com/embed/${video}`}
+                  title={`Video ${idx + 1}`}
+                  allowFullScreen
+                ></iframe>
+              ))}
+            </div>
           </div>
-        </div>
-
-        {/* Beginners Videos */}
-        <div className="resources-video-category">
-          <h3>Beginner Farming Techniques</h3>
-          <div className="resources-video-container">
-            <iframe src="https://www.youtube.com/embed/heTxEsrPVdQ" title="Beginner Video 1" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/fRlUhUWS0Hk" title="Beginner Video 2" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/_AM2fX24vtQ" title="Beginner Video 3" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/ETZF-oyPSy0" title="Beginner Video 4" allowFullScreen></iframe>
-          </div>
-        </div>
-
-        {/* Intermediate Videos */}
-        <div className="resources-video-category">
-          <h3>Intermediate Farming Techniques</h3>
-          <div className="resources-video-container">
-            <iframe src="https://www.youtube.com/embed/zFdxU-73yAc" title=" Intermediate Video 1" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/ETZF-oyPSy0" title=" Intermediate Video 2" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/LGF33NN4B8U" title=" Intermediate Video 3" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/ys42RUFhMqg" title=" Intermediate Video 4" allowFullScreen></iframe>
-          </div>
-        </div>
-
-        {/* Advanced Videos */}
-        <div className="resources-video-category">
-          <h3>Advanced Farming Techniques</h3>
-          <div className="resources-video-container">
-            <iframe src="https://www.youtube.com/embed/kN_gua66C1w" title="Advanced Video 1" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/ETZF-oyPSy0" title="Advanced Video 2" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/nGtdZxTNu0o" title="Advanced Video 3" allowFullScreen></iframe>
-            <iframe src="https://www.youtube.com/embed/zFdxU-73yAc" title="Advanced Video 4" allowFullScreen></iframe>
-         
-          </div>
-        </div>
+        ))}
       </section>
     </div>
   );

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/app.css';
-import "../styles/signup.css";
 
 const Signup = () => {
     const [mobile, setMobile] = useState('');
@@ -12,15 +10,12 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (password !== confirmPassword) {
             alert("Passwords do not match!");
             return;
         }
-
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/signup', { mobile, password });
-            
+            const response = await axios.post('http://localhost:5000/api/auth/signup', { username, mobile, password });
             alert(response.data.message);
             navigate("/login");
         } catch (error) {
@@ -32,47 +27,26 @@ const Signup = () => {
     };
 
     return (
-        <div className="auth-container" id="signup-container">
-            <h2 className="auth-title" id="signup-title">Create Account</h2>
-            <form className="auth-form" id="signup-form" onSubmit={handleSubmit}>
-                <div className="auth-field" id="signup-mobile-field">
-                    <label htmlFor="signup-mobile">Mobile Number:</label>
-                    <input 
-                        type="tel" 
-                        id="signup-mobile" 
-                        className="auth-input" 
-                        value={mobile} 
-                        onChange={(e) => setMobile(e.target.value)} 
-                        required 
-                    />
-                </div>
-                <div className="auth-field" id="signup-password-field">
-                    <label htmlFor="signup-password">Password:</label>
-                    <input 
-                        type="password" 
-                        id="signup-password" 
-                        className="auth-input" 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                        required 
-                    />
-                </div>
-                <div className="auth-field" id="signup-confirm-password-field">
-                    <label htmlFor="signup-confirm-password">Confirm Password:</label>
-                    <input 
-                        type="password" 
-                        id="signup-confirm-password" 
-                        className="auth-input" 
-                        value={confirmPassword} 
-                        onChange={(e) => setConfirmPassword(e.target.value)} 
-                        required 
-                    />
-                </div>
-                <button type="submit" className="auth-button" id="signup-button">Sign Up</button>
-            </form>
-            <p className="auth-switch" id="switch-to-login">
-                Already have an account? <a href="/login">Login</a>
-            </p>
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-t from-neutral-100 to-green-300">
+            <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
+                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Create Account</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-gray-700">Mobile Number:</label>
+                        <input type="tel" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" value={mobile} onChange={(e) => setMobile(e.target.value)} required />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700">Password:</label>
+                        <input type="password" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700">Confirm Password:</label>
+                        <input type="password" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                    </div>
+                    <button type="submit" className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">Sign Up</button>
+                </form>
+                <p className="mt-4 text-center text-gray-600">Already have an account? <a href="/login" className="text-green-500 hover:underline">Login</a></p>
+            </div>
         </div>
     );
 };

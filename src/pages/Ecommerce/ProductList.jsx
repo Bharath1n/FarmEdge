@@ -88,19 +88,19 @@ const products = [
         },
       ];
     
-const ProductList = ({ addToCart, addToWishlist }) => {
-  return (
-    <div className="product-list">
-      {products.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          addToCart={addToCart}
-          addToWishlist={addToWishlist}
-        />
-      ))}
-    </div>
-  );
-};
-
-export default ProductList;
+      const ProductList = ({ addToCart, addToWishlist }) => {
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 bg-gray-100">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                addToCart={addToCart}
+                addToWishlist={addToWishlist}
+              />
+            ))}
+          </div>
+        );
+      };
+      
+      export default ProductList;

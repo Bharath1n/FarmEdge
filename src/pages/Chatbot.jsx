@@ -1,6 +1,4 @@
 import React, { useRef, useState } from "react";
-import '../styles/app.css';
-import "../styles/chatbot.css"; 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Markdown from 'react-markdown'
 
@@ -123,25 +121,40 @@ const HelpBot = () => {
   };
 
   return (
-    <main>
-      <div className="chat-container">
-        <div ref={chatBoxRef} className="chat-box">
+    <main className="max-w-lg mx-auto my-[15px] p-4 md:p-6 shadow-lg rounded-2xl">
+      <div className="flex flex-col h-[70vh] border border-gray-300 rounded-xl overflow-hidden">
+
+        <div ref={chatBoxRef} className="flex-1 overflow-y-auto p-4 bg-gray-100 space-y-3">
           {messages.map((msg, index) => (
-            <div key={index} className={`chat-bubble ${msg.sender}-message`}>
-              <Markdown>{msg.text}</Markdown>
-              <span className="message-timestamp">{new Date().toLocaleTimeString()}</span>
+            <div
+              key={index}
+              className={`p-2 rounded-lg w-fit ${
+                msg.sender === "user" ? "ml-auto bg-green-200" : "mr-auto bg-gray-200"
+              }`}
+            >
+              <Markdown className="text-gray-800">{msg.text}</Markdown>
+              <span className="block text-xs text-gray-500 text-right">
+                {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              </span>
             </div>
           ))}
         </div>
-        <div className="chat-input-container">
+
+        <div className="p-3 bg-white border-t border-gray-300 flex items-center gap-3">
           <input
             type="text"
+            className="flex-1 px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="Type your query here..."
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type your query here..."
           />
-          <button onClick={handleSend}>Send</button>
+          <button
+            onClick={handleSend}
+            className="px-4 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 transition active:scale-95"
+          >
+            Send
+          </button>
         </div>
       </div>
     </main>

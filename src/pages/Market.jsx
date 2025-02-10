@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/app.css';
-import "../styles/market.css";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 function Market() {
   const [marketData, setMarketData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'State', direction: 'ascending' });
   const [loading, setLoading] = useState(true);
@@ -75,81 +74,80 @@ function Market() {
   const paginatedData = paginateData(filteredData, currentPage, rowsPerPage);
   const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
-  const sortedData = React.useMemo(() => {
-    let sortableItems = [...paginatedData];
-    if (sortConfig !== null) {
-      sortableItems.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableItems;
-  }, [paginatedData, sortConfig]);
-  
-  const requestSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
-    }
-    setSortConfig({ key, direction });
-  };
+  const priceData = marketData.map(row => ({
+    commodity: row.Commodity,
+    minPrice: Number(row['Min Price']) || 0,
+    maxPrice: Number(row['Max Price']) || 0,
+    modalPrice: Number(row['Modal Price']) || 0
+
+  })).slice(0, 10);
 
   return (
-    <div className="market-container">
-      <header>
-        <h1>Real-Time Market Insights</h1>
+    <div className="container mx-auto p-6">
+      <header className="text-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Real-Time Market Insights</h1>
       </header>
-      <section className="market-data">
-        <h2>Market Prices</h2>
+      <section className="bg-white shadow-md rounded-lg p-6">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Market Prices</h2>
         <input
           type="text"
           value={searchQuery}
           onChange={handleSearch}
           placeholder="Search..."
+          className="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-green-400"
         />
-        
-        <table>
-          <thead>
-            <tr>
-              <th onClick={() => requestSort('State')}>State</th>
-              <th>District</th>
-              <th>Market</th>
-              <th>Commodity</th>
-              <th>Variety</th>
-              <th>Grade</th>
-              <th>Arrival Date</th>
-              <th>Min Price</th>
-              <th>Max Price</th>
-              <th>Modal Price</th>
-              <th>Commodity Code</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.length > 0 ? (
-              paginatedData.map((row, index) => (
-                <tr key={index}>
-                  {Object.values(row).map((value, index) => (
-                    <td key={index}>{value}</td>
-                  ))}
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="11">No data available</td>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border border-gray-300 bg-gray-100">
+            <thead>
+              <tr className="bg-green-600 text-white">
+                <th className="p-3">State</th>
+                <th className="p-3">District</th>
+                <th className="p-3">Market</th>
+                <th className="p-3">Commodity</th>
+                <th className="p-3">Variety</th>
+                <th className="p-3">Grade</th>
+                <th className="p-3">Arrival Date</th>
+                <th className="p-3">Min Price</th>
+                <th className="p-3">Max Price</th>
+                <th className="p-3">Modal Price</th>
+                <th className="p-3">Commodity Code</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-        <div className="pagination">
-          <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
-          <span>Page {currentPage} of {totalPages}</span>
-          <button onClick={handleNextPage} disabled={currentPage * rowsPerPage >= filteredData.length}>Next</button>
+            </thead>
+            <tbody>
+              {paginatedData.length > 0 ? (
+                paginatedData.map((row, index) => (
+                  <tr key={index} className="text-center border-b border-gray-300">
+                    {Object.values(row).map((value, index) => (
+                      <td key={index} className="p-2">{value}</td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="11" className="text-center p-4">No data available</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
+        <div className="flex justify-between items-center mt-4">
+          <button onClick={handlePrevPage} disabled={currentPage === 1} className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 disabled:bg-gray-300">Previous</button>
+          <span className="text-gray-600">Page {currentPage} of {totalPages}</span>
+          <button onClick={handleNextPage} disabled={currentPage * rowsPerPage >= filteredData.length} className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 disabled:bg-gray-300">Next</button>
+        </div>
+      </section>
+      <section className="bg-white shadow-md rounded-lg p-6 mt-6">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Price Trends</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={priceData}>
+            <XAxis dataKey="commodity" tick={{ fontSize: 12 }} />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="minPrice" fill="#82ca9d" name="Min Price" />
+            <Bar dataKey="maxPrice" fill="#8884d8" name="Max Price" />
+            <Bar dataKey="modalPrice" fill="#ffc658" name="Modal Price" />
+          </BarChart>
+        </ResponsiveContainer>
       </section>
     </div>
   );
