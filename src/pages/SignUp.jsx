@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -45,7 +46,9 @@ const Signup = () => {
                     </div>
                     <button type="submit" className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">Sign Up</button>
                 </form>
-                <p className="mt-4 text-center text-gray-600">Already have an account? <a href="/login" className="text-green-500 hover:underline">Login</a></p>
+                <p className="mt-4 text-center text-gray-600">Already have an account? 
+                <Link className="text-green-500 hover:underline" to="/login">Login</Link>
+                </p>
             </div>
         </div>
     );
