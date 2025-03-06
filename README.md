@@ -38,7 +38,7 @@ FarmEdge is a modern web application designed to assist farmers with real-time d
 ## Setup Instructions
 
 1. Clone the repository:
-   git clone <repository url>
+   git clone <repository-url>
    cd FarmEdge
 
 2. Install dependencies:
