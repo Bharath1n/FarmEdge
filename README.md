@@ -10,6 +10,7 @@ FarmEdge is a modern web application designed to assist farmers with real-time d
 - Chatbot Assistance: Interact with Ramesh, the AI assistant, powered by Google Generative AI, for queries related to   agriculture and farming practices.
 - Resources Section: Access the latest news articles from NewsData.io and educational videos related to farming.
 
+
 ## Technologies Used
 
 ### Frontend
