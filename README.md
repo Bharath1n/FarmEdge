@@ -20,7 +20,7 @@ FarmEdge is a modern web application designed to assist farmers with real-time d
 - Chart.js & Recharts (for data visualization)
 - React Router
 - Axios
-- React Markdown
+- React Markdown (proper structure)
 - Framer Motion (for animations)
 
 ### Backend
