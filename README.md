@@ -10,7 +10,6 @@ FarmEdge is a modern web application designed to assist farmers with real-time d
 - Chatbot Assistance: Interact with Ramesh, the AI assistant, powered by Google Generative AI, for queries related to   agriculture and farming practices.
 - Resources Section: Access the latest news articles from NewsData.io and educational videos related to farming.
 
-
 ## Technologies Used
 
 ### Frontend
@@ -20,7 +19,7 @@ FarmEdge is a modern web application designed to assist farmers with real-time d
 - Chart.js & Recharts (for data visualization)
 - React Router
 - Axios
-- React Markdown (proper structure)
+- React Markdown
 - Framer Motion (for animations)
 
 ### Backend
@@ -39,7 +38,7 @@ FarmEdge is a modern web application designed to assist farmers with real-time d
 ## Setup Instructions
 
 1. Clone the repository:
-   git clone <repository-url>
+   git clone <repository url>
    cd FarmEdge
 
 2. Install dependencies:

@@ -1,15 +1,14 @@
-import React, { useRef, useState } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import Markdown from 'react-markdown'
+import { useRef, useState, useEffect } from "react";
+import Markdown from 'react-markdown';
+import { Send, Bot, User, Sparkles, Loader2 } from 'lucide-react';
+import { useAuth } from "@clerk/clerk-react";
 
 const HelpBot = () => {
   const chatBoxRef = useRef(null);
+  const { getToken } = useAuth();
   const [userInput, setUserInput] = useState("");
   const [messages, setMessages] = useState([]);
-  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
-
-  const genAI = new GoogleGenerativeAI(geminiApiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const [isTyping, setIsTyping] = useState(false);
   const generationConfig = {
     temperature: 1,
     topP: 0.95,
@@ -17,95 +16,58 @@ const HelpBot = () => {
     maxOutputTokens: 8192,
     responseMimeType: "text/plain",
   };
-  const addMessage = (message, sender) => {
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { text: message, sender },
-    ]);
+
+  useEffect(() => {
+    // Add welcome message on component mount
+    const welcomeMessage = {
+      text: "ನಮಸ್ಕಾರ! (Namaste!) Welcome to FarmEdge, FarmEdge provides real-time data and resources for farmers. I'm Ramesh, and I'll be assisting you today. How can I help you?",
+      sender: "bot",
+      timestamp: new Date()
+    };
+    setMessages([welcomeMessage]);
+  }, []);
+
+  useEffect(() => {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
-  };
-  const sendQuery = async (query) => {
-    try {
-      const chatSession = model.startChat({
-        generationConfig,
-        history: [
-          {
-            role: "user",
-            parts: [
-              {
-                text: "You are Ramesh, an assistant for our website called FarmEdge. Interact with the user and give simple minimalistic solutions and answers to the question and try to use Kannada a little while greeting the users and provide information about anything related to agriculture and farming practices. If they ask about the website, guide them through the sections. If the input is out of context, then convey to the user that you don't have information regarding this and ask them to solve only agriculture and farming-related concerns. After the interaction is done, greet the users with thanks for contacting us and if possible, try to greet in Kannada language. Whatever the farmer's first input might be, begin with greeting and telling about our website in 1 or 2 lines and ask about their concerns. Answer according to user input anything related to agriculture and farming practices, ask questions about what they specifically want to know about and solve their issues by providing information and resources in simple words.",
-              },
-            ],
-          },
-          {
-            role: "model",
-            parts: [
-              {
-                text: "ನಮಸ್ಕಾರ! (Namaste!) Welcome to FarmEdge, FarmEdge provides real-time data and resources for farmers. I'm Ramesh, and I'll be assisting you today. How can I help you?",
-              },
-            ],
-          },
-          {
-            role: "user",
-            parts: [
-              {text: "give structured output to the users whenever they ask something also provide weather information and other information regarding agriculture"},
-            ],
-          },
-          {
-            role: "model",
-            parts: [
-              {text: "ಸರಿ (Saari), I understand.  Let's organize the information you need. To best help you, please tell me specifically what you want to know. For example:\n\n* **Specific Crop Information:** What crop are you interested in? (e.g., rice, wheat, cotton, etc.)  What aspects of growing that crop are you curious about? (e.g., planting, irrigation, pest control, harvesting, etc.)\n* **Livestock:** What kind of livestock do you raise? (e.g., cows, goats, chickens, etc.) What are your concerns regarding their care or management?\n* **Weather:** What is your location? I can then provide you with a current weather forecast and any relevant alerts.  Are you interested in a short-term (a few days) or long-term forecast?  Are you looking for historical weather data?\n* **Sustainable Farming Practices:**  What specific sustainable practices are you interested in learning more about? (e.g., crop rotation, cover cropping, organic farming, etc.)\n* **Government Schemes/Support:** Are you looking for information on any government schemes or financial support for farmers in your region? (Please specify your region)\n\n\nOnce I have a clearer idea of what you need, I can provide you with structured, easy-to-understand information.  I can also provide links to relevant resources if needed.\n"},
-            ],
-          },
-          {
-            role: "user",
-            parts: [
-              {text: "in the complete entire chat be responsive to the user and analyze the previous questions and remember all the inputs that user has asked and answer according to that and consider previous interactions also while giving responses and answer questions simultaneously analyzing the inputs"},
-            ],
-          },
-          {
-            role: "model",
-            parts: [
-              {text: "ನಮಸ್ಕಾರ! (Namaste!) Welcome back to FarmEdge. I remember our last conversation.  To help me answer your questions accurately and efficiently, please tell me what you would like to discuss today.  I can access information on various aspects of agriculture, including specific crops, livestock, weather forecasts, sustainable farming practices, and government schemes.  Let me know your specific concerns so I can provide you with the most relevant information.\n"},
-            ],
-          },
-          {
-            role: "user",
-            parts: [
-              {text: "also give structured outputs don't use unwanted characters in the chat it should be only in text numbers and necessary characters format"},
-            ],
-          },
-          {
-            role: "model",
-            parts: [
-              {text: "ನಮಸ್ಕಾರ! (Namaste!)  I'm ready to help you again. Please ask your questions about agriculture, livestock, weather, or sustainable farming practices.  I will structure my responses clearly and use only necessary characters.  I will also remember our past conversations to give you the most relevant information.\n"},
-            ],
-          },
-          {
-            role: "user",
-            parts: [
-              {text: "but use Kannada language for greeting and other purpose as much as possible and intoduce yourself in the beginning and then ask concern\n"},
-            ],
-          },
-          {
-            role: "model",
-            parts: [
-              {text: "ನಮಸ್ಕಾರ! (Namaste!)  I am Ramesh, your assistant at FarmEdge.  What agricultural concerns can I help you with today?\n"},
-            ],
-          },
-        ],
-      });
+  }, [messages]);
 
-      const result = await chatSession.sendMessage(query);
-      const responseText = result.response.text();
-      addMessage(responseText, "bot");
-    } catch (error) {
-      console.error("Error generating content:", error);
-      addMessage("Sorry, I couldn't generate a response.", "bot");
-    }
+  const addMessage = (message, sender) => {
+    const newMessage = {
+      text: message,
+      sender,
+      timestamp: new Date()
+    };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
+
+const sendQuery = async (query) => {
+  setIsTyping(true);
+  try {
+    const token = await getToken();
+
+const res = await fetch("http://localhost:5001/api/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify({ message: query }),
+});
+
+    const data = await res.json();
+    setIsTyping(false);
+    addMessage(data?.reply || "Sorry, I couldn't generate a response.", "bot");
+  } catch (err) {
+    setIsTyping(false);
+    addMessage(
+      "ಕ್ಷಮಿಸಿ (Sorry), ಉತ್ತರವನ್ನು ತಯಾರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+      "bot"
+    );
+  }
+};
+
   const handleSend = () => {
     const query = userInput.trim();
     if (query) {
@@ -114,51 +76,247 @@ const HelpBot = () => {
       setUserInput("");
     }
   };
+
   const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
       handleSend();
     }
   };
 
   return (
-    <main className="max-w-lg mx-auto my-[15px] p-4 md:p-6 shadow-lg rounded-2xl">
-      <div className="flex flex-col h-[70vh] border border-gray-300 rounded-xl overflow-hidden">
-
-        <div ref={chatBoxRef} className="flex-1 overflow-y-auto p-4 bg-gray-100 space-y-3">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`p-2 rounded-lg w-fit ${
-                msg.sender === "user" ? "ml-auto bg-green-200" : "mr-auto bg-gray-200"
-              }`}
-            >
-              <Markdown className="text-gray-800">{msg.text}</Markdown>
-              <span className="block text-xs text-gray-500 text-right">
-                {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div className="p-3 bg-white border-t border-gray-300 flex items-center gap-3">
-          <input
-            type="text"
-            className="flex-1 px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            placeholder="Type your query here..."
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-          <button
-            onClick={handleSend}
-            className="px-4 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 transition active:scale-95"
-          >
-            Send
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 py-8 px-4">
+      {/* Header */}
+      <div className="max-w-4xl mx-auto mb-6 animate-fadeIn">
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 px-4 py-2 rounded-full mb-4">
+            <Sparkles className="w-4 h-4" />
+            <span className="text-sm font-semibold">AI-Powered Agriculture Assistant</span>
+          </div>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">Meet Ramesh</h1>
+          <p className="text-gray-600">Your FarmEdge AI assistant for all agriculture queries</p>
         </div>
       </div>
-    </main>
+
+      {/* Chat Container */}
+      <main className="max-w-4xl mx-auto animate-slideUp">
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-green-100">
+          {/* Chat Header */}
+          <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-6 text-white">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg">
+                  <Bot className="w-8 h-8 text-green-600" />
+                </div>
+                <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold">Ramesh</h2>
+                <p className="text-green-100 text-sm">Online • Ready to help</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Messages Container */}
+          <div 
+            ref={chatBoxRef} 
+            className="h-[60vh] overflow-y-auto p-6 bg-gradient-to-b from-gray-50 to-white space-y-4"
+          >
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`flex gap-3 ${msg.sender === "user" ? "flex-row-reverse" : "flex-row"} animate-messageSlide`}
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                {/* Avatar */}
+                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-md ${
+                  msg.sender === "user" 
+                    ? "bg-gradient-to-br from-blue-500 to-cyan-500" 
+                    : "bg-gradient-to-br from-green-500 to-emerald-500"
+                }`}>
+                  {msg.sender === "user" ? (
+                    <User className="w-5 h-5 text-white" />
+                  ) : (
+                    <Bot className="w-5 h-5 text-white" />
+                  )}
+                </div>
+
+                {/* Message Bubble */}
+                <div className={`flex flex-col max-w-[70%] ${msg.sender === "user" ? "items-end" : "items-start"}`}>
+                  <div
+                    className={`px-5 py-3 rounded-2xl shadow-md ${
+                      msg.sender === "user"
+                        ? "bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-tr-none"
+                        : "bg-white border border-gray-200 text-gray-800 rounded-tl-none"
+                    }`}
+                  >
+                    <Markdown className="prose prose-sm max-w-none">{msg.text}</Markdown>
+                  </div>
+                  <span className="text-xs text-gray-500 mt-1 px-2">
+                    {msg.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+              </div>
+            ))}
+
+            {/* Typing Indicator */}
+            {isTyping && (
+              <div className="flex gap-3 animate-messageSlide">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-md">
+                  <Bot className="w-5 h-5 text-white" />
+                </div>
+                <div className="bg-white border border-gray-200 px-5 py-3 rounded-2xl rounded-tl-none shadow-md">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Input Area */}
+          <div className="p-6 bg-gray-50 border-t border-gray-200">
+            <div className="flex items-end gap-3">
+              <div className="flex-1 relative">
+                <textarea
+                  className="w-full px-5 py-4 pr-12 border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 resize-none bg-white shadow-sm"
+                  placeholder="Type your agriculture query here..."
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  rows="1"
+                  style={{ minHeight: "56px", maxHeight: "120px" }}
+                />
+              </div>
+              <button
+                onClick={handleSend}
+                disabled={!userInput.trim() || isTyping}
+                className="flex-shrink-0 w-14 h-14 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl hover:from-green-700 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+              >
+                {isTyping ? (
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                ) : (
+                  <Send className="w-6 h-6" />
+                )}
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-3 text-center">
+              Press <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">Enter</kbd> to send • <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">Shift + Enter</kbd> for new line
+            </p>
+          </div>
+        </div>
+
+        {/* Quick Tips */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 animate-fadeIn" style={{ animationDelay: "0.3s" }}>
+          <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+            <h3 className="font-semibold text-gray-800 mb-2">🌾 Crop Guidance</h3>
+            <p className="text-sm text-gray-600">Get expert advice on planting, irrigation, and harvesting</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+            <h3 className="font-semibold text-gray-800 mb-2">🌤️ Weather Info</h3>
+            <p className="text-sm text-gray-600">Ask about weather forecasts and climate patterns</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+            <h3 className="font-semibold text-gray-800 mb-2">🐄 Livestock Care</h3>
+            <p className="text-sm text-gray-600">Learn about animal husbandry and health management</p>
+          </div>
+        </div>
+      </main>
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes messageSlide {
+          from {
+            opacity: 0;
+            transform: translateX(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.6s ease-out both;
+        }
+        
+        .animate-slideUp {
+          animation: slideUp 0.6s ease-out both;
+        }
+        
+        .animate-messageSlide {
+          animation: messageSlide 0.3s ease-out both;
+        }
+        
+        /* Custom scrollbar */
+        .overflow-y-auto::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-thumb {
+          background: #10b981;
+          border-radius: 10px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+          background: #059669;
+        }
+
+        /* Markdown styling */
+        .prose {
+          color: inherit;
+        }
+        
+        .prose strong {
+          color: inherit;
+          font-weight: 600;
+        }
+        
+        .prose ul, .prose ol {
+          margin: 0.5rem 0;
+        }
+        
+        .prose li {
+          margin: 0.25rem 0;
+        }
+        
+        kbd {
+          font-family: monospace;
+          font-weight: 600;
+        }
+      `}</style>
+    </div>
   );
 };
 
 export default HelpBot;
+
+console.log("Chatbot component loaded");

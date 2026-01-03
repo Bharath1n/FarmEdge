@@ -1,79 +1,141 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import cors from 'cors';
-import dotenv from 'dotenv';
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+import { clerkMiddleware, requireAuth } from "@clerk/express";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 dotenv.config();
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5001;
 
-app.use(cors());
+/* -------------------- MIDDLEWARE -------------------- */
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
+app.use(clerkMiddleware());
 
-mongoose.connect(
-    'mongodb+srv://dbUser1:test123@cluster1.killz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1',
-    { useNewUrlParser: true, useUnifiedTopology: true }
-).then(() => console.log('MongoDB connected'))
-.catch((err) => console.error('MongoDB connection error:', err));
+/* -------------------- MONGODB -------------------- */
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB error:", err));
 
+/* -------------------- USER SCHEMA -------------------- */
 const userSchema = new mongoose.Schema({
-    mobile: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+  clerkId: { type: String, unique: true, required: true },
+  wishlist: [
+    {
+      productId: Number,
+      name: String,
+      price: Number,
+      image: String,
+      buyUrl: String,
+      rating: Number,
+      category: String,
+      tag: String,
+    },
+  ],
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
-app.post('/api/auth/signup', async (req, res) => {
-    const { mobile, password } = req.body;
+/* -------------------- WISHLIST ROUTES -------------------- */
 
-    try {
-        // Check if the user already exists
-        const existingUser = await User.findOne({ mobile });
-        if (existingUser) {
-            return res.status(400).json({ error: 'User already exists' });
-        }
+// Get wishlist
+app.get("/api/user/wishlist", requireAuth(), async (req, res) => {
+  try {
+    const { userId } = req.auth();
 
-        // Hash the password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Create new user
-        const newUser = new User({ mobile, password: hashedPassword });
-        await newUser.save();
-
-        res.json({ message: 'Signup successful!' });
-    } catch (err) {
-        res.status(500).json({ error: 'Server error' });
+    let user = await User.findOne({ clerkId: userId });
+    if (!user) {
+      user = await User.create({ clerkId: userId, wishlist: [] });
     }
+
+    res.json(user.wishlist);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch wishlist" });
+  }
 });
 
-app.post('/api/auth/login', async (req, res) => {
-    const { mobile, password } = req.body;
+// Add to wishlist
+app.post("/api/user/wishlist", requireAuth(), async (req, res) => {
+  try {
+    const { userId } = req.auth();
+    const product = req.body;
 
-    try {
-        // Find user
-        const user = await User.findOne({ mobile });
-        if (!user) {
-            return res.status(400).json({ error: 'Invalid credentials' });
-        }
+    const user = await User.findOneAndUpdate(
+      { clerkId: userId, "wishlist.productId": { $ne: product.productId } },
+      { $push: { wishlist: product } },
+      { upsert: true, new: true }
+    );
 
-        // Validate password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ error: 'Invalid credentials' });
-        }
+    res.json(user.wishlist);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to add to wishlist" });
+  }
+});
 
-        // Generate JWT
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+// Remove from wishlist
+app.delete("/api/user/wishlist/:productId", requireAuth(), async (req, res) => {
+  try {
+    const { userId } = req.auth();
+    const productId = Number(req.params.productId);
 
-        res.json({ message: 'Login successful', token });
-    } catch (err) {
-        res.status(500).json({ error: 'Server error' });
+    const user = await User.findOneAndUpdate(
+      { clerkId: userId },
+      { $pull: { wishlist: { productId } } },
+      { new: true }
+    );
+
+    res.json(user.wishlist);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to remove item" });
+  }
+});
+
+/* -------------------- GEMINI CHATBOT -------------------- */
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+const model = genAI.getGenerativeModel({
+  model: "gemini-pro",
+});
+
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (!message || typeof message !== "string") {
+      return res.status(400).json({
+        reply: "Invalid message",
+      });
     }
+
+    const prompt = `
+You are Ramesh, a friendly farming assistant for Indian farmers.
+Reply in Kannada or simple English.
+User: ${message}
+`;
+
+    const result = await model.generateContent(prompt);
+    const reply = result.response.text();
+
+    res.json({ reply });
+  } catch (error) {
+    console.error("Gemini error:", error);
+    res.status(500).json({
+      reply: "ಕ್ಷಮಿಸಿ, ಈಗ ಉತ್ತರಿಸಲು ಸಾಧ್ಯವಾಗುತ್ತಿಲ್ಲ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+    });
+  }
 });
-// Start the server
+
+/* -------------------- SERVER -------------------- */
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
